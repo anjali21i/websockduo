@@ -17,16 +17,16 @@ public class ChatController {
     @SendTo("/topic/welcomeme")
     public Welcome welcome(Message msg) {
         System.out.println("inside welome controller ");
-        return new Welcome(HtmlUtils.htmlEscape(msg.getMessages()));   
+        return new Welcome(HtmlUtils.htmlEscape(msg.getContent()));   
     }
 
-    @MessageMapping("/chat.sendMessage")
+    @MessageMapping("/sendMessage")
     @SendTo("/topic/public")
     public Message sendMessage(@Payload Message msg) {
         return msg;
     }
 
-    @MessageMapping("/chat.addUser")
+    @MessageMapping("/addUser")
     @SendTo("/topic/public")
     public Message adduser(@Payload Message msg, SimpMessageHeaderAccessor accessor) {
         //add user in web socket session

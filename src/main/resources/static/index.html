@@ -1,209 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="./style.css" rel="stylesheet" />
-    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <script src="@{/webjars/jquery/3.1.1/jquery.min.js}"></script>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <!-- <script src="@{/webjars/bootstrap/3.3.7-1/js/bootstrap.min.js}"></script> -->
-    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="./app.js"></script>
-    <title>Web Chat Socket</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>WebSocket Chat Application</title>
+    <link rel="stylesheet" href="./style.css" />
 </head>
 
 <body>
-    <div class="container">
-        <div class="connect-wrap">
-            <form class="form-conn form-wrap">
-                <input class="username" id="username" type="text" name="username" placeholder="Enter youe name" class="form-control">      
-                <span class="input-group-btn btn-connect">
-                    <button id="connect" type="submit" onclick="connect();" class="btn btn-primary btn-flat">Connect to server and start chatting</button>
-                </span>
-                <span class="input-group-btn btn-connect">
-                    <button id="disconnect" type="submit" onclick="disconnect();" class="btn btn-primary btn-flat" disabled="disabled">Disconnect server</button>
-                </span>
+    <noscript>
+        <h2>Sorry! Your browser doesn't support Javascript</h2>
+    </noscript>
+
+    <div id="username-page">
+        <div class="username-page-container">
+            <h1 class="title">Type your username to enter the Chatroom</h1>
+            <form id="usernameForm" name="usernameForm">
+                <div class="form-group">
+                    <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="accent username-submit">Start Chatting</button>
+                </div>
             </form>
         </div>
-        <div id ="chat-wrap" class="row bootstrap snippets bootdeys chat-wrap hidden">
-            <div class="col-md-6">
-                <div class="box box-primary direct-chat direct-chat-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Direct Web Sock Chat</h3>
-                        <div class="box-tools pull-right">
-                            <span data-toggle="tooltip" title class="badge bg-light-blue"
-                                data-original-title="3 New Messages">3</span>
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                    class="fa fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts"
-                                data-widget="chat-pane-toggle">
-                                <i class="fa fa-comments"></i></button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
-                                    class="fa fa-times"></i></button>
-                        </div>
-                    </div>
+    </div>
 
-                    <div class="box-body">
-
-                        <div class="direct-chat-messages">
-
-                            <div class="direct-chat-msg">
-                                <div class="direct-chat-info clearfix">
-                                    <span class="direct-chat-name pull-left">Alexander Pierce</span>
-                                    <span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>
-                                </div>
-
-                                <img class="direct-chat-img" src="https://bootdey.com/img/Content/user_1.jpg"
-                                    alt="Message User Image">
-                                <div class="direct-chat-text">
-                                    Is this template really for free? That's unbelievable!
-                                </div>
-
-                            </div>
-
-
-                            <div class="direct-chat-msg right">
-                                <div class="direct-chat-info clearfix">
-                                    <span class="direct-chat-name pull-right">Sarah Bullock</span>
-                                    <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>
-                                </div>
-
-                                <img class="direct-chat-img" src="https://bootdey.com/img/Content/user_2.jpg"
-                                    alt="Message User Image">
-                                <div class="direct-chat-text">
-                                    You better believe it!
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="direct-chat-contacts">
-                            <ul class="contacts-list">
-                                <li>
-                                    <a href="#">
-                                        <img class="contacts-list-img" src="https://bootdey.com/img/Content/user_1.jpg">
-                                        <div class="contacts-list-info">
-                                            <span class="contacts-list-name">
-                                                Count Dracula
-                                                <small class="contacts-list-date pull-right">2/28/2015</small>
-                                            </span>
-                                            <span class="contacts-list-msg">How have you been? I was...</span>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-
-                        </div>
-
-                    </div>
-
-                    <div class="box-footer">
-                        <form action="#" method="post">
-                            <div class="input-group">
-                                <input id="2" type="text" name="message" placeholder="Type Message ..." class="form-control">
-                                <span class="input-group-btn">
-                                    <button id="send" type="submit" onclick="send();" class="btn btn-primary btn-flat">Send</button>
-                                </span>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <div id="chat-page" class="hidden">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h2>WebSocket Chat</h2>
             </div>
-            <!-- <div class="col-md-6">
-                <div class="box box-success direct-chat direct-chat-success">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Direct Chat</h3>
-                        <div class="box-tools pull-right">
-                            <span data-toggle="tooltip" title="3 New Messages" class="badge bg-green">3</span>
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i
-                                    class="fa fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-box-tool" data-toggle="tooltip" title="Contacts"
-                                data-widget="chat-pane-toggle">
-                                <i class="fa fa-comments"></i></button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i
-                                    class="fa fa-times"></i></button>
-                        </div>
-                    </div>
+            <div class="connecting">
+                Connecting...
+            </div>
+            <ul id="messageArea">
 
-                    <div class="box-body">
-
-                        <div class="direct-chat-messages">
-
-                            <div class="direct-chat-msg">
-                                <div class="direct-chat-info clearfix">
-                                    <span class="direct-chat-name pull-left">Alexander Pierce</span>
-                                    <span class="direct-chat-timestamp pull-right">23 Jan 2:00 pm</span>
-                                </div>
-
-                                <img class="direct-chat-img" src="https://bootdey.com/img/Content/user_1.jpg"
-                                    alt="Message User Image">
-                                <div class="direct-chat-text">
-                                    Is this template really for free? That's unbelievable!
-                                </div>
-                                <div class="direct-chat-text">
-                                    Is this template really for free? That's unbelievable!
-                                </div>
-                            </div>
-
-                            <div class="direct-chat-msg right">
-                                <div class="direct-chat-info clearfix">
-                                    <span class="direct-chat-name pull-right">Sarah Bullock</span>
-                                    <span class="direct-chat-timestamp pull-left">23 Jan 2:05 pm</span>
-                                </div>
-
-                                <img class="direct-chat-img" src="https://bootdey.com/img/Content/user_2.jpg"
-                                    alt="Message User Image">
-                                <div class="direct-chat-text">
-                                    You better believe it!
-                                </div>
-                                <div class="direct-chat-text">
-                                    You better believe it!
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="direct-chat-contacts">
-                            <ul class="contacts-list">
-                                <li>
-                                    <a href="#">
-                                        <img class="contacts-list-img" src="https://bootdey.com/img/Content/user_1.jpg">
-                                        <div class="contacts-list-info">
-                                            <span class="contacts-list-name">
-                                                Count Dracula
-                                                <small class="contacts-list-date pull-right">2/28/2015</small>
-                                            </span>
-                                            <span class="contacts-list-msg">How have you been? I was...</span>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="box-footer">
-                        <form action="#" method="post">
-                            <div class="input-group">
-                                <input type="text" name="message" placeholder="Type Message ..." class="form-control">
-                                <span class="input-group-btn">
-                                    <button type="submit" class="btn btn-success btn-flat">Send</button>
-                                </span>
-                            </div>
-                        </form>
+            </ul>
+            <form id="messageForm" name="messageForm">
+                <div class="form-group">
+                    <div class="input-group clearfix">
+                        <input type="text" id="message" placeholder="Type a message..." autocomplete="off"
+                            class="form-control" />
+                        <button type="submit" class="primary">Send</button>
                     </div>
                 </div>
-            </div> -->
+            </form>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="./app.js"></script>
 </body>
 
 </html>

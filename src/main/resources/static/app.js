@@ -1,59 +1,118 @@
+'use strict';
+
+var usernamePage = document.querySelector('#username-page');
+var chatPage = document.querySelector('#chat-page');
+var usernameForm = document.querySelector('#usernameForm');
+var messageForm = document.querySelector('#messageForm');
+var messageInput = document.querySelector('#message');
+var messageArea = document.querySelector('#messageArea');
+var connectingElement = document.querySelector('.connecting');
+
 var stompClient = null;
 var username = null;
 
-function setConnected(connected) {
-    $("#connect").prop("disabled", connected);
-    $("#disconnect").prop("disabled", !connected);
-    if (connected) {
-        document.querySelector('#chat-wrap').classList.remove('hidden');
-        $("#chat-wrap").show();
-    }
-    else {
-        $("#chat-wrap").hide();
-    }
-    $("#msg-text-wrap-mine").html("");
-}
+var colors = [
+    '#2196F3', '#32c787', '#00BCD4', '#ff5652',
+    '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
+];
 
-function connect() {
-    console.log("inside connect")
-    username = document.querySelector("#username").value.trim();
-    if(username) {
+function connect(event) {
+    username = document.querySelector('#name').value.trim();
+
+    if (username) {
+        usernamePage.classList.add('hidden');
+        chatPage.classList.remove('hidden');
+
         var socket = new SockJS('/stomp-endpoint');
         stompClient = Stomp.over(socket);
-        stompClient.connect({}, function (frame) {
-            setConnected(true);
-            console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/welcomeme', function (welcome) {
-                console.log("subscribed after call");
-                showChatWindow(JSON.parse(welcome.body).content);
-            });
-        });
+
+        stompClient.connect({}, onConnected, onError);
     }
-    
+    event.preventDefault();
 }
 
-function disconnect() {
-    if (stompClient !== null) {
-        stompClient.disconnect();
+
+function onConnected() {
+    // Subscribe to the Public Topic
+    stompClient.subscribe('/topic/public', onMessageReceived);
+
+    // Tell your username to the server
+    stompClient.send("/app/addUser",
+        {},
+        JSON.stringify({ sender: username, type: 'JOIN' })
+    )
+
+    connectingElement.classList.add('hidden');
+}
+
+
+function onError(error) {
+    connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+    connectingElement.style.color = 'red';
+}
+
+
+function sendMessage(event) {
+    var messageContent = messageInput.value.trim();
+    if (messageContent && stompClient) {
+        var chatMessage = {
+            sender: username,
+            content: messageInput.value,
+            type: 'CHAT'
+        };
+        stompClient.send("/app/sendMessage", {}, JSON.stringify(chatMessage));
+        messageInput.value = '';
     }
-    setConnected(false);
-    console.log("Disconnected");
+    event.preventDefault();
 }
 
-function sendMessages() {
-    stompClient.send("/app/welcome", {}, JSON.stringify({'messages': $("#messages").val()}));
+
+function onMessageReceived(payload) {
+    var message = JSON.parse(payload.body);
+
+    var messageElement = document.createElement('li');
+
+    if (message.type === 'JOIN') {
+        messageElement.classList.add('event-message');
+        message.content = message.sender + ' joined!';
+    } else if (message.type === 'LEAVE') {
+        messageElement.classList.add('event-message');
+        message.content = message.sender + ' left!';
+    } else {
+        messageElement.classList.add('chat-message');
+
+        var avatarElement = document.createElement('i');
+        var avatarText = document.createTextNode(message.sender[0]);
+        avatarElement.appendChild(avatarText);
+        avatarElement.style['background-color'] = getAvatarColor(message.sender);
+
+        messageElement.appendChild(avatarElement);
+
+        var usernameElement = document.createElement('span');
+        var usernameText = document.createTextNode(message.sender);
+        usernameElement.appendChild(usernameText);
+        messageElement.appendChild(usernameElement);
+    }
+
+    var textElement = document.createElement('p');
+    var messageText = document.createTextNode(message.content);
+    textElement.appendChild(messageText);
+
+    messageElement.appendChild(textElement);
+
+    messageArea.appendChild(messageElement);
+    messageArea.scrollTop = messageArea.scrollHeight;
 }
 
-function showChatWindow(message) {
-    console.log("chat win")
-    $("#msg-text-wrap-mine").append('<div class="direct-chat-text">' + message.message + "</div>");
+
+function getAvatarColor(messageSender) {
+    var hash = 0;
+    for (var i = 0; i < messageSender.length; i++) {
+        hash = 31 * hash + messageSender.charCodeAt(i);
+    }
+    var index = Math.abs(hash % colors.length);
+    return colors[index];
 }
 
-$(function () {
-    $("form").on('submit', function (e) {
-        e.preventDefault();
-    });
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#msg-send" ).click(function() { sendMessages(); });
-});
+usernameForm.addEventListener('submit', connect, true)
+messageForm.addEventListener('submit', sendMessage, true)
