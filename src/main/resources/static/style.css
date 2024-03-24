@@ -1,6 +1,6 @@
 body {
     margin-top: 20px;
-    background: #eee;
+    background: #e0b685;
 }
 
 .box {
@@ -606,6 +606,32 @@ body {
     border-left-color: #00a65a;
 }
 .connect-wrap {
-    margin: 10px;
-    
+    position: relative;
+    background-color: #97a0b3;
+    border: #222d32;
+    border-width: 5px;
+    border-radius: 15px;
+    margin: 15px;
+    padding: 10px; 
+}
+
+.form-wrap {
+    margin: 8px;
+}
+
+.username {
+    display: inline;
+    position: inherit;
+    min-width: 40%;
+    size: 18px;
+    margin: 5px;
+    min-height: 12px;
+}
+
+.btn-connect {
+    margin: 5px;
+}
+
+.hidden {
+    display: none;
 }

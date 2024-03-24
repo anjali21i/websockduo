@@ -20,16 +20,17 @@
 <body>
     <div class="container">
         <div class="connect-wrap">
-            <form class="form-conn">
-                <span class="input-group-btn">
-                    <button id="connect" type="submit" onclick="connect();" class="btn btn-primary btn-flat">Connect to server</button>
+            <form class="form-conn form-wrap">
+                <input class="username" id="username" type="text" name="username" placeholder="Enter youe name" class="form-control">      
+                <span class="input-group-btn btn-connect">
+                    <button id="connect" type="submit" onclick="connect();" class="btn btn-primary btn-flat">Connect to server and start chatting</button>
                 </span>
-                <span class="input-group-btn">
+                <span class="input-group-btn btn-connect">
                     <button id="disconnect" type="submit" onclick="disconnect();" class="btn btn-primary btn-flat" disabled="disabled">Disconnect server</button>
                 </span>
             </form>
         </div>
-        <div class="row bootstrap snippets bootdeys chat-wrap">
+        <div id ="chat-wrap" class="row bootstrap snippets bootdeys chat-wrap hidden">
             <div class="col-md-6">
                 <div class="box box-primary direct-chat direct-chat-primary">
                     <div class="box-header with-border">
@@ -116,7 +117,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
                 <div class="box box-success direct-chat direct-chat-success">
                     <div class="box-header with-border">
                         <h3 class="box-title">Direct Chat</h3>
@@ -200,7 +201,7 @@
                         </form>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </body>
