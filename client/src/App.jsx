@@ -1,12 +1,11 @@
 import './App.css'
+import WebSockRoom from './socketComponent/webSockRoom';
 
 function App() {
+
   return (
     <>
-      <div>
-        
-      </div>
-  
+      <WebSockRoom />
     </>
   )
 }
