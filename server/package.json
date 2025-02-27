@@ -1,0 +1,13 @@
+{
+  "name": "websockduo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "anjali",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "nodemon": "^3.1.9",
+    "socket.io": "^4.8.1"
+  }
+}
